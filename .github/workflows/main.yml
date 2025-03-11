@@ -9,6 +9,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: echo "Login to Docker Hub"
       - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - run: "Build and push Docker image"
       - run: docker build -t muhammadhaziq/react-test -f Dockerfile.dev .
+      - run: "Run tests"
       - run: docker run -e CI=true muhammadhaziq/react-test npm test
