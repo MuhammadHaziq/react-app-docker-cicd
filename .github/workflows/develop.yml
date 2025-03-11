@@ -29,5 +29,5 @@ jobs:
       - run: echo "Build Docker Image"
       - run: docker build -t muhammadhaziq/react-test .
       - run: echo "Run Docker Image"
-      - run: docker run -p 3000:80 muhammadhaziq/react-test
+      - run: docker run -d -p 8080:80 muhammadhaziq/react-test
       - run: echo "Deploying Docker Image"
