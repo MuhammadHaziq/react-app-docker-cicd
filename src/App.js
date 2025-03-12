@@ -17,7 +17,10 @@ function App() {
         >
           Learn CI / CD
         </a>
-        <p>Now u can test live file changes in docker</p>
+        <p>
+          Now u can test live file changes in docker and add workflows for
+          develop branch
+        </p>
       </header>
     </div>
   );
