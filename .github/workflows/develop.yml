@@ -6,9 +6,6 @@ on:
     paths-ignore:
       - ".github/workflows/*"
       - "README.md"
-  pull_request:
-    branches:
-      - develop
   workflow_dispatch:
 
 jobs:
@@ -25,26 +22,27 @@ jobs:
       - run: echo "Run tests"
       - run: docker run -e CI=true muhammadhaziq/react-test npm test
 
-  build-and-deploy:
-    needs: run-test-cases
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: echo "Login to Docker Hub"
-      - run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-      - run: echo "Build Docker Image"
-      - run: docker build -t muhammadhaziq/react-prod .
-      - run: echo "Run Docker Image"
-      # - run: docker run -d -p 8080:80 muhammadhaziq/react-test
-      # - run: echo "Deploying Docker Image"
-      - run: echo "Run Container to Extract Build"
-      - run: docker create --name react-container muhammadhaziq/react-prod
-      - run: docker cp react-container:/usr/share/nginx/html ./build
-      - run: docker rm -f react-container
+    ########### Comment build and deploy job because it's not deploying on github pages otherwise it's working fine i have to resolve this issue ##########
+  # build-and-deploy:
+  #   needs: run-test-cases
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - run: echo "Login to Docker Hub"
+  #     - run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+  #     - run: echo "Build Docker Image"
+  #     - run: docker build -t muhammadhaziq/react-prod .
+  #     - run: echo "Run Docker Image"
+  #     # - run: docker run -d -p 8080:80 muhammadhaziq/react-test
+  #     # - run: echo "Deploying Docker Image"
+  #     - run: echo "Run Container to Extract Build"
+  #     - run: docker create --name react-container muhammadhaziq/react-prod
+  #     - run: docker cp react-container:/usr/share/nginx/html ./build
+  #     - run: docker rm -f react-container
 
-      # Deploy to GitHub Pages
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build
+  #     # Deploy to GitHub Pages
+  #     - name: Deploy to GitHub Pages
+  #       uses: peaceiris/actions-gh-pages@v4
+  #       with:
+  #         github_token: ${{ secrets.GITHUB_TOKEN }}
+  #         publish_dir: ./build
