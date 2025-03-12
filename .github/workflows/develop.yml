@@ -1,41 +1,3 @@
-# name: Stage
-# on:
-#   push:
-#     branches:
-#       - develop
-#     paths-ignore:
-#       - ".github/workflows/*"
-#       - "README.md"
-#   pull_request:
-#     branches:
-#       - develop
-# jobs:
-#   run-test-cases:
-#     runs-on: ubuntu-latest
-#     steps:
-#       #https://github.com/marketplace/actions/checkout
-#       #if u want to install latest node version u can check above doc and search node js in it
-#       - uses: actions/checkout@v4
-#       - run: echo "Login to Docker Hub"
-#       - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-#       - run: echo "Build Docker image"
-#       - run: docker build -t muhammadhaziq/react-test -f Dockerfile.dev .
-#       - run: echo "Run tests"
-#       - run: docker run -e CI=true muhammadhaziq/react-test npm test
-
-#   build:
-#     needs: run-test-cases
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v4
-#       - run: echo "Login to Docker Hub"
-#       - run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-#       - run: echo "Build Docker Image"
-#       - run: docker build -t muhammadhaziq/react-test .
-#       - run: echo "Run Docker Image"
-#       - run: docker run -d -p 8080:80 muhammadhaziq/react-test
-#       - run: echo "Deploying Docker Image"
-
 name: Stage
 on:
   push:
@@ -47,19 +9,13 @@ on:
   pull_request:
     branches:
       - develop
-
 jobs:
   run-test-cases:
     runs-on: ubuntu-latest
     steps:
+      #https://github.com/marketplace/actions/checkout
+      #if u want to install latest node version u can check above doc and search node js in it
       - uses: actions/checkout@v4
-      - name: Cache Node Modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
       - run: echo "Login to Docker Hub"
       - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
       - run: echo "Build Docker image"
@@ -67,45 +23,15 @@ jobs:
       - run: echo "Run tests"
       - run: docker run -e CI=true muhammadhaziq/react-test npm test
 
-  build:
+  build-and-deploy:
     needs: run-test-cases
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Cache Node Modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
       - run: echo "Login to Docker Hub"
-      - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+      - run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
       - run: echo "Build Docker Image"
       - run: docker build -t muhammadhaziq/react-test .
       - run: echo "Run Docker Image"
       - run: docker run -d -p 8080:80 muhammadhaziq/react-test
       - run: echo "Deploying Docker Image"
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Cache Node Modules
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
-      - run: echo "Login to Docker Hub"
-      - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-      - run: echo "Pull latest image"
-      - run: docker pull muhammadhaziq/react-test
-      - run: echo "Stop running container"
-      - run: docker stop react-test-container || true
-      - run: docker rm react-test-container || true
-      - run: echo "Run Docker container"
-      - run: docker run -d --name react-test-container -p 8080:80 muhammadhaziq/react-test
-      - run: echo "Deployment completed successfully"
