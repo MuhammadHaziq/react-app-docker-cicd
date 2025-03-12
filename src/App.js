@@ -19,7 +19,7 @@ function App() {
         </a>
         <p>
           Now u can test live file changes in docker and add workflows for
-          develop branch
+          develop branch also add github pages
         </p>
       </header>
     </div>
