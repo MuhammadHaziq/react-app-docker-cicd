@@ -22,65 +22,65 @@ jobs:
       - run: echo "Run tests"
       - run: docker run -e CI=true muhammadhaziq/react-test npm test
 
-  build-and-deploy:
-    needs: run-test-cases
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deploy-pages.outputs.page_url }}
+  # build-and-deploy:
+  #   needs: run-test-cases
+  #   runs-on: ubuntu-latest
+  #   environment:
+  #     name: github-pages
+  #     url: ${{ steps.deploy-pages.outputs.page_url }}
 
-    steps:
-      - uses: actions/checkout@v4
+  #   steps:
+  #     - uses: actions/checkout@v4
 
-      - name: Login to Docker Hub
-        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+  #     - name: Login to Docker Hub
+  #       run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Docker Image
-        run: docker build -t muhammadhaziq/react-prod .
+  #     - name: Build Docker Image
+  #       run: docker build -t muhammadhaziq/react-prod .
 
-      - name: Extract Build Folder from Docker Container
-        id: build
-        run: |
-          docker create --name react-container muhammadhaziq/react-prod
-          docker cp react-container:/usr/share/nginx/html ./build
-          docker rm -f react-container
+  #     - name: Extract Build Folder from Docker Container
+  #       id: build
+  #       run: |
+  #         docker create --name react-container muhammadhaziq/react-prod
+  #         docker cp react-container:/usr/share/nginx/html ./build
+  #         docker rm -f react-container
 
-      - name: Deploy to GitHub Pages
-        id: deploy-pages
-        uses: actions/deploy-pages@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          # publish_dir: ./build
-    # needs: run-test-cases
-    # runs-on: ubuntu-latest
-    # environment:
-    #   name: github-pages
-    #   url: ${{ steps.deployment.outputs.page_url }}
+  #     - name: Deploy to GitHub Pages
+  #       id: deploy-pages
+  #       uses: actions/deploy-pages@v4
+  #       with:
+  #         token: ${{ secrets.GITHUB_TOKEN }}
+  #         # publish_dir: ./build
+  #   # needs: run-test-cases
+  #   # runs-on: ubuntu-latest
+  #   # environment:
+  #   #   name: github-pages
+  #   #   url: ${{ steps.deployment.outputs.page_url }}
 
-    # steps:
-    #   - uses: actions/checkout@v4
-    #   - name: Login to Docker Hub
-    #     run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+  #   # steps:
+  #   #   - uses: actions/checkout@v4
+  #   #   - name: Login to Docker Hub
+  #   #     run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
 
-    #   - name: Build Docker Image
-    #     run: docker build -t muhammadhaziq/react-prod .
+  #   #   - name: Build Docker Image
+  #   #     run: docker build -t muhammadhaziq/react-prod .
 
-    #   - name: Extract Build Folder from Docker Container
-    #     run: |
-    #       docker create --name react-container muhammadhaziq/react-prod
-    #       docker cp react-container:/usr/share/nginx/html ./build
-    #       docker rm -f react-container
+  #   #   - name: Extract Build Folder from Docker Container
+  #   #     run: |
+  #   #       docker create --name react-container muhammadhaziq/react-prod
+  #   #       docker cp react-container:/usr/share/nginx/html ./build
+  #   #       docker rm -f react-container
 
-    #   - name: Deploy to GitHub Pages
-    #       id: deployment
-    #       uses: actions/deploy-pages@v4
-    #       with:
-    #         github_token: ${{ secrets.GITHUB_TOKEN }}
-    #         publish_dir: ./build
+  #   #   - name: Deploy to GitHub Pages
+  #   #       id: deployment
+  #   #       uses: actions/deploy-pages@v4
+  #   #       with:
+  #   #         github_token: ${{ secrets.GITHUB_TOKEN }}
+  #   #         publish_dir: ./build
 
-    # - name: Deploy to GitHub Pages
-    #   uses: peaceiris/actions-gh-pages@v4
-    #   with:
-    #     github_token: ${{ secrets.GITHUB_TOKEN }}
-    #     publish_dir: ./build
-    #     force_orphan: true
+  #   # - name: Deploy to GitHub Pages
+  #   #   uses: peaceiris/actions-gh-pages@v4
+  #   #   with:
+  #   #     github_token: ${{ secrets.GITHUB_TOKEN }}
+  #   #     publish_dir: ./build
+  #   #     force_orphan: true
