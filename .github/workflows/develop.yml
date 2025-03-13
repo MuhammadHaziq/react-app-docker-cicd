@@ -4,7 +4,7 @@ on:
     branches:
       - develop
     paths-ignore:
-      - ".github/workflows/*"
+      # - ".github/workflows/*"
       - "README.md"
   workflow_dispatch:
 
@@ -22,27 +22,65 @@ jobs:
       - run: echo "Run tests"
       - run: docker run -e CI=true muhammadhaziq/react-test npm test
 
-    ########### Comment build and deploy job because it's not deploying on github pages otherwise it's working fine i have to resolve this issue ##########
   build-and-deploy:
     needs: run-test-cases
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy-pages.outputs.page_url }}
+
     steps:
       - uses: actions/checkout@v4
-      - run: echo "Login to Docker Hub"
-      - run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
-      - run: echo "Build Docker Image"
-      - run: docker build -t muhammadhaziq/react-prod .
-      - run: echo "Run Docker Image"
-      # - run: docker run -d -p 8080:80 muhammadhaziq/react-test
-      # - run: echo "Deploying Docker Image"
-      - run: echo "Run Container to Extract Build"
-      - run: docker create --name react-container muhammadhaziq/react-prod
-      - run: docker cp react-container:/usr/share/nginx/html ./build
-      - run: docker rm -f react-container
 
-      # Deploy to GitHub Pages
+      - name: Login to Docker Hub
+        run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build Docker Image
+        run: docker build -t muhammadhaziq/react-prod .
+
+      - name: Extract Build Folder from Docker Container
+        id: build
+        run: |
+          docker create --name react-container muhammadhaziq/react-prod
+          docker cp react-container:/usr/share/nginx/html ./build
+          docker rm -f react-container
+
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+        id: deploy-pages
+        uses: actions/deploy-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./build
+          token: ${{ secrets.GITHUB_TOKEN }}
+          # publish_dir: ./build
+    # needs: run-test-cases
+    # runs-on: ubuntu-latest
+    # environment:
+    #   name: github-pages
+    #   url: ${{ steps.deployment.outputs.page_url }}
+
+    # steps:
+    #   - uses: actions/checkout@v4
+    #   - name: Login to Docker Hub
+    #     run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+
+    #   - name: Build Docker Image
+    #     run: docker build -t muhammadhaziq/react-prod .
+
+    #   - name: Extract Build Folder from Docker Container
+    #     run: |
+    #       docker create --name react-container muhammadhaziq/react-prod
+    #       docker cp react-container:/usr/share/nginx/html ./build
+    #       docker rm -f react-container
+
+    #   - name: Deploy to GitHub Pages
+    #       id: deployment
+    #       uses: actions/deploy-pages@v4
+    #       with:
+    #         github_token: ${{ secrets.GITHUB_TOKEN }}
+    #         publish_dir: ./build
+
+    # - name: Deploy to GitHub Pages
+    #   uses: peaceiris/actions-gh-pages@v4
+    #   with:
+    #     github_token: ${{ secrets.GITHUB_TOKEN }}
+    #     publish_dir: ./build
+    #     force_orphan: true
