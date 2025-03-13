@@ -41,13 +41,14 @@ jobs:
           docker create --name react-container muhammadhaziq/react-prod
           docker cp react-container:/usr/share/nginx/html ./build
           docker rm -f react-container
-
+      ### Resourace File https://github.com/actions/upload-pages-artifact
       - name: Upload static files as artifact
         id: deployment
         uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action
         with:
           path: ./build
   deploy:
+    ## Resource File https://github.com/actions/deploy-pages?tab=readme-ov-file
     permissions:
       pages: write # to deploy to Pages
       id-token: write # to verify the deployment originates from an appropriate source
