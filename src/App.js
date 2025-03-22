@@ -20,7 +20,7 @@ function App() {
         <p>
           Now u can test live file changes in docker and add workflows for
           develop branch also add github pages. and finally deploy react app on
-          github pages using yml file. Add New Condidition in Workflow
+          github pages using yml file. Update in condidition of Workflows
         </p>
       </header>
     </div>
