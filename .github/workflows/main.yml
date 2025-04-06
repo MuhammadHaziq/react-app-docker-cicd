@@ -41,7 +41,7 @@ jobs:
         run: docker build -t muhammadhaziq/react-cicd-app .
 
       - name: Push Docker Image
-        run: docker push muhammadhaziq/react-cicd-app .
+        run: docker push muhammadhaziq/react-cicd-app
 
       - name: Extract Build Folder from Docker Container
         id: build
