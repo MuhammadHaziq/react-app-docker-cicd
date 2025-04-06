@@ -38,12 +38,15 @@ jobs:
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Docker Image
-        run: docker build -t muhammadhaziq/react-prod .
+        run: docker build -t muhammadhaziq/react-cicd-app .
+
+      - name: Push Docker Image
+        run: docker push muhammadhaziq/react-cicd-app .
 
       - name: Extract Build Folder from Docker Container
         id: build
         run: |
-          docker create --name react-container muhammadhaziq/react-prod
+          docker create --name react-container muhammadhaziq/react-cicd-app
           docker cp react-container:/usr/share/nginx/html ./build
           docker rm -f react-container
       ### Resourace File https://github.com/actions/upload-pages-artifact
