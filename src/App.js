@@ -20,7 +20,7 @@ function App() {
         <p>
           Now u can test live file changes in docker and add workflows for
           develop branch also add github pages. and finally deploy react app on
-          github pages using yml file. Add Rulesets
+          github pages using yml file. Add Rulesets, new push
         </p>
       </header>
     </div>
